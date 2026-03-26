@@ -152,21 +152,23 @@
     const dataInicio = new Date("2023-02-10T00:00:00").getTime();
     const dataFim = new Date("2027-06-01T20:00:00").getTime();
 
-    function formatarTempo(ms) {
-      if (ms < 0) ms = 0;
+function formatarTempo(ms) {
+  if (ms < 0) ms = 0;
 
-      const totalSegundos = Math.floor(ms / 1000);
+  const totalSegundos = Math.floor(ms / 1000);
 
-      const totalDias = Math.floor(totalSegundos / 86400);
-      const horas = Math.floor((totalSegundos % 86400) / 3600);
-      const minutos = Math.floor((totalSegundos % 3600) / 60);
-      const segundos = totalSegundos % 60;
+  const totalDias = Math.floor(totalSegundos / 86400);
 
-      const anos = Math.floor(totalDias / 365);
-      const dias = totalDias % 365;
+  const anos = Math.floor(totalDias / 365);
+  const meses = Math.floor((totalDias % 365) / 30);
+  const dias = (totalDias % 365) % 30;
 
-      return `${anos}a ${dias}d<br>${horas}h ${minutos}m ${segundos}s`;
-    }
+  const horas = Math.floor((totalSegundos % 86400) / 3600);
+  const minutos = Math.floor((totalSegundos % 3600) / 60);
+  const segundos = totalSegundos % 60;
+
+  return `${anos}a ${meses}m ${dias}d ${horas}h ${minutos}m ${segundos}s`;
+}
 
     function atualizarContador() {
       const agora = new Date().getTime();
@@ -192,7 +194,7 @@
       }
 
       const percentual = (tempoPassado / tempoTotal) * 100;
-      const percentualFormatado = percentual.toFixed(2).replace(".", ",");
+      const percentualFormatado = percentual.toFixed(6).replace(".", ",");
 
       document.getElementById("faltam").innerHTML = formatarTempo(tempoRestante);
       document.getElementById("passou").innerHTML = formatarTempo(tempoPassado);
