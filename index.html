@@ -14,12 +14,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
       text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
     }
 
     .container {
-      max-width: 700px;
+      max-width: 760px;
+      width: 100%;
       padding: 20px;
     }
 
@@ -30,6 +33,7 @@
     .logo img {
       max-width: 180px;
       width: 100%;
+      height: auto;
     }
 
     h1 {
@@ -37,17 +41,75 @@
       margin-bottom: 10px;
     }
 
-    p {
-      opacity: 0.7;
+    .subtitulo {
+      opacity: 0.8;
       margin-bottom: 30px;
       font-size: 1.1rem;
     }
 
-    #contador {
-      font-size: 2.2rem;
+    .bloco {
+      background: rgba(255, 255, 255, 0.35);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .titulo-bloco {
+      font-size: 1rem;
       font-weight: bold;
-      letter-spacing: 1px;
-      line-height: 1.6;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tempo {
+      font-size: 2rem;
+      font-weight: bold;
+      line-height: 1.5;
+    }
+
+    .percentual {
+      font-size: 2.8rem;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .barra-externa {
+      width: 100%;
+      max-width: 520px;
+      height: 22px;
+      background: rgba(0, 0, 0, 0.12);
+      border-radius: 999px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    .barra-interna {
+      height: 100%;
+      width: 0%;
+      background: rgba(0, 0, 0, 0.65);
+      border-radius: 999px;
+      transition: width 0.8s ease;
+    }
+
+    .rodape {
+      margin-top: 10px;
+      font-size: 0.95rem;
+      opacity: 0.75;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.9rem;
+      }
+
+      .tempo {
+        font-size: 1.5rem;
+      }
+
+      .percentual {
+        font-size: 2.2rem;
+      }
     }
   </style>
 </head>
@@ -62,34 +124,80 @@
     </div>
 
     <h1>Contagem regressiva para a formatura</h1>
-     <div id="contador"></div>
-    <p>Turma de Biomedicina — o final está chegando</p>
+    <p class="subtitulo">Turma de Biomedicina — o final está chegando</p>
+
+    <div class="bloco">
+      <div class="titulo-bloco">Quanto falta</div>
+      <div class="tempo" id="faltam">Carregando...</div>
+    </div>
+
+    <div class="bloco">
+      <div class="titulo-bloco">Quanto já passou</div>
+      <div class="tempo" id="passou">Carregando...</div>
+    </div>
+
+    <div class="bloco">
+      <div class="titulo-bloco">Progresso do curso</div>
+      <div class="percentual" id="percentual">0%</div>
+      <div class="barra-externa">
+        <div class="barra-interna" id="barra"></div>
+      </div>
+      <div class="rodape">Do início do curso até a data da formatura</div>
+    </div>
+
   </div>
 
   <script>
-    // 🔥 DEFINA A DATA DA FORMATURA AQUI
-    const dataAlvo = new Date("2027-06-01T20:00:00").getTime();
+    // Datas do curso
+    const dataInicio = new Date("2023-02-10T00:00:00").getTime();
+    const dataFim = new Date("2027-06-01T20:00:00").getTime();
 
-    function atualizarContador() {
-      const agora = new Date().getTime();
-      const diferenca = dataAlvo - agora;
+    function formatarTempo(ms) {
+      if (ms < 0) ms = 0;
 
-      if (diferenca <= 0) {
-        document.getElementById("contador").innerHTML = "Formados. Nova fase iniciada.";
-        return;
-      }
+      const totalSegundos = Math.floor(ms / 1000);
 
-      const totalDias = Math.floor(diferenca / (1000 * 60 * 60 * 24));
+      const totalDias = Math.floor(totalSegundos / 86400);
+      const horas = Math.floor((totalSegundos % 86400) / 3600);
+      const minutos = Math.floor((totalSegundos % 3600) / 60);
+      const segundos = totalSegundos % 60;
 
       const anos = Math.floor(totalDias / 365);
       const dias = totalDias % 365;
 
-      const horas = Math.floor((diferenca % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutos = Math.floor((diferenca % (1000 * 60 * 60)) / (1000 * 60));
-      const segundos = Math.floor((diferenca % (1000 * 60)) / 1000);
+      return `${anos}a ${dias}d<br>${horas}h ${minutos}m ${segundos}s`;
+    }
 
-      document.getElementById("contador").innerHTML =
-        `${anos}a ${dias}d<br>${horas}h ${minutos}m ${segundos}s`;
+    function atualizarContador() {
+      const agora = new Date().getTime();
+
+      const tempoPassado = agora - dataInicio;
+      const tempoRestante = dataFim - agora;
+      const tempoTotal = dataFim - dataInicio;
+
+      if (agora >= dataFim) {
+        document.getElementById("faltam").innerHTML = "Formados. Nova fase iniciada.";
+        document.getElementById("passou").innerHTML = formatarTempo(tempoTotal);
+        document.getElementById("percentual").innerText = "100,00%";
+        document.getElementById("barra").style.width = "100%";
+        return;
+      }
+
+      if (agora <= dataInicio) {
+        document.getElementById("faltam").innerHTML = formatarTempo(tempoTotal);
+        document.getElementById("passou").innerHTML = "0a 0d<br>0h 0m 0s";
+        document.getElementById("percentual").innerText = "0,00%";
+        document.getElementById("barra").style.width = "0%";
+        return;
+      }
+
+      const percentual = (tempoPassado / tempoTotal) * 100;
+      const percentualFormatado = percentual.toFixed(2).replace(".", ",");
+
+      document.getElementById("faltam").innerHTML = formatarTempo(tempoRestante);
+      document.getElementById("passou").innerHTML = formatarTempo(tempoPassado);
+      document.getElementById("percentual").innerText = `${percentualFormatado}%`;
+      document.getElementById("barra").style.width = `${percentual}%`;
     }
 
     atualizarContador();
