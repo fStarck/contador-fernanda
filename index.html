@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Em breve</title>
+  <title>Contagem para Formatura</title>
 
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #ffe4aa;
+      background: #e9c3b8;
       color: #000;
       display: flex;
       align-items: center;
@@ -28,17 +28,19 @@
     }
 
     .logo img {
-      max-width: 200px;
+      max-width: 180px;
+      width: 100%;
     }
 
     h1 {
-      font-size: 2.5rem;
+      font-size: 2.4rem;
       margin-bottom: 10px;
     }
 
     p {
       opacity: 0.7;
       margin-bottom: 30px;
+      font-size: 1.1rem;
     }
 
     #contador {
@@ -53,28 +55,29 @@
 <body>
   <div class="container">
 
-    <!-- LOGO (opcional) -->
+    <!-- LOGO -->
+    <!-- Coloque um arquivo chamado "logo.png" no repositório -->
     <div class="logo">
-      <img src="logo.png" alt="Logo">
+      <img src="logo.png" alt="Logotipo Biomedicina">
     </div>
 
-    <h1>Estamos preparando algo grande</h1>
-    <p>Fique atento, lançamento em breve</p>
+    <h1>Contagem regressiva para a formatura</h1>
+    <p>Turma de Biomedicina Estética — o final está chegando</p>
 
     <div id="contador"></div>
 
   </div>
 
   <script>
-    // 🔥 DEFINA SUA DATA AQUI
-    const dataAlvo = new Date("2026-05-01T20:00:00").getTime();
+    // 🔥 DEFINA A DATA DA FORMATURA AQUI
+    const dataAlvo = new Date("2027-06-01T20:00:00").getTime();
 
     function atualizarContador() {
       const agora = new Date().getTime();
       const diferenca = dataAlvo - agora;
 
       if (diferenca <= 0) {
-        document.getElementById("contador").innerHTML = "Já começou!";
+        document.getElementById("contador").innerHTML = "Formados. Nova fase iniciada.";
         return;
       }
 
